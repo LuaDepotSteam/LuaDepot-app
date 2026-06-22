@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
 import { openUrl } from '@tauri-apps/plugin-opener';
+import { open as shellOpen } from '@tauri-apps/plugin-shell';
 import { toast } from '@heroui/react';
 
 interface AppSettings {
@@ -137,8 +138,12 @@ export default function SettingsView({ updateInfo, onCheckUpdate, onInstallUpdat
       try {
         await openUrl(connectUrl);
       } catch (e) {
-        console.log('[connect] openUrl failed, trying window.open:', e);
-        window.open(connectUrl, '_blank');
+        console.warn('[connect] openUrl failed, trying shell.open:', e);
+        try {
+          await shellOpen(connectUrl);
+        } catch (e2) {
+          console.error('[connect] shell.open also failed:', e2);
+        }
       }
 
       toast('Browser opened. Complete the login to connect your account.');

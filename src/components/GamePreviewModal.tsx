@@ -3,6 +3,7 @@ import { Cancel01Icon, PlusSignIcon, CheckIcon, ChevronLeftIcon, ChevronRightIco
 import { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { openUrl } from '@tauri-apps/plugin-opener';
+import { open as shellOpen } from '@tauri-apps/plugin-shell';
 import { motion, AnimatePresence } from 'framer-motion';
 import DrawSvgLoader from './ui/DrawSvgLoader';
 
@@ -107,7 +108,12 @@ export default function GamePreviewModal({ appid, onClose, onAdd, alreadyInLibra
 
   const imgIndex = images.length > 0 ? ((page % images.length) + images.length) % images.length : 0;
   const paginate = (newDirection: number) => { setPage([page + newDirection, newDirection]); };
-  const openLink = async (url: string) => { try { await openUrl(url); } catch (e) { window.open(url, '_blank'); } };
+  const openLink = async (url: string) => {
+    try { await openUrl(url); } catch (e) {
+      console.warn('[openLink] openUrl failed, trying shell.open:', e);
+      try { await shellOpen(url); } catch (e2) { console.error('[openLink] shell.open also failed:', e2); }
+    }
+  };
 
   const features = details?.categories?.filter((c) => CATEGORY_LABELS[c.id]) || [];
   const genres = details?.genres || [];

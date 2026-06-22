@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { openUrl } from '@tauri-apps/plugin-opener';
+import { open as shellOpen } from '@tauri-apps/plugin-shell';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ZapIcon, ExternalLinkIcon, Loading01Icon } from '@hugeicons/core-free-icons';
 import { getCurrentWindow } from '@tauri-apps/api/window';
@@ -36,8 +37,13 @@ export default function ConnectScreen({ onConnected }: ConnectScreenProps) {
       const connectUrl = `https://luadepot.dev/connect?id=${connectId}`;
       try {
         await openUrl(connectUrl);
-      } catch {
-        window.open(connectUrl, '_blank');
+      } catch (e) {
+        console.warn('[connect] openUrl failed, trying shell.open:', e);
+        try {
+          await shellOpen(connectUrl);
+        } catch (e2) {
+          console.error('[connect] shell.open also failed:', e2);
+        }
       }
 
       for (let i = 0; i < 120; i++) {

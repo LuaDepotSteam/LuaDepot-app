@@ -1,0 +1,54 @@
+name: Build and Draft Release
+ 
+on:
+  push:
+    tags:
+      - 'v*'  # Triggers on version tags like v1.0.0
+ 
+permissions:
+  contents: write  # Needed to create releases
+ 
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-latest, ubuntu-latest, windows-latest]
+ 
+    runs-on: ${{ matrix.platform }}
+ 
+    steps:
+      - uses: actions/checkout@v4
+ 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+ 
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+ 
+      - name: Install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+ 
+      - name: Install frontend dependencies
+        run: npm install
+ 
+      - name: Build Tauri app
+        uses: tauri-apps/tauri-action@v0
+ 
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true  # ← This is the key part!
+          files: |
+            src-tauri/target/release/bundle/**/*.dmg
+            src-tauri/target/release/bundle/**/*.exe
+            src-tauri/target/release/bundle/**/*.msi
+            src-tauri/target/release/bundle/**/*.tar.gz
+            src-tauri/target/release/bundle/**/*.AppImage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

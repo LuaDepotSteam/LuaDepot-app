@@ -1,0 +1,50 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "LuaDepot",
+  "version": "0.1.0",
+  "identifier": "com.luadepot.app",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "macOSPrivateApi": true,
+    "windows": [
+      {
+        "title": "FlintGen",
+        "width": 1100,
+        "height": 750,
+        "minWidth": 800,
+        "minHeight": 550,
+        "decorations": false,
+        "transparent": true,
+        "titleBarStyle": "Transparent",
+        "theme": "Dark"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' https://assets.codepen.io https://cdn.akamai.steamstatic.com https://cdn.cloudflare.steamstatic.com https://store.steampowered.com data:; connect-src 'self' https://store.steampowered.com https://api.luadepot.dev https://luadepot.dev https://api.steamcmd.net https://steamcommunity.com ipc: http://ipc.localhost; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU2RDg0MEIzNzZEMTVDNjAKUldSZ1hORjJzMERZVmlReTZTMm5TYm9kWWN1VzZNRzVFam51SDVaelB2S3daQmhSTWJGTUhYa0sK",
+      "endpoints": [
+        "https://api.luadepot.dev/api/updates/{{target}}/{{arch}}/{{current_version}}"
+      ]
+    }
+  }
+}

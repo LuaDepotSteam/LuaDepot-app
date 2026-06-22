@@ -22,3 +22,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Submodules / embedded repos
+searchbar/
+
+# Lock files from other package managers
+bun.lock
+pnpm-lock.yaml
+
+# Signing keys
+tauri.key
+tauri.key.pub
+
+# Build artifacts
+*.dmg
+*.AppImage
+*.deb
+*.msi
